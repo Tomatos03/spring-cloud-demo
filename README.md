@@ -1,21 +1,44 @@
----
-typora-copy-images-to: ./img
-typora-root-url: ./
----
+- [1. Nacos](#1-nacos)
+  - [1.1 安装](#11-安装)
+  - [1.2 服务注册](#12-服务注册)
+  - [1.3 服务发现](#13-服务发现)
+  - [1.4 远程调用](#14-远程调用)
+  - [1.5 负载均衡](#15-负载均衡)
+  - [1.6 配置中心](#16-配置中心)
+  - [1.7 数据隔离](#17-数据隔离)
+- [2. OpenFeign](#2-openfeign)
+  - [2.1 基本使用](#21-基本使用)
+  - [2.2 小技巧](#22-小技巧)
+  - [2.3 一道面试题](#23-一道面试题)
+  - [2.4 进阶用法](#24-进阶用法)
+    - [配置日志](#配置日志)
+    - [配置超时控制](#配置超时控制)
+    - [配置重试机制](#配置重试机制)
+    - [配置拦截器](#配置拦截器)
+    - [配置Fallback](#配置fallback)
+- [3. Sentinel](#3-sentinel)
+  - [3.1 工作原理](#31-工作原理)
+  - [3.2 整合 Sentinel](#32-整合-sentinel)
+  - [3.3 异常处理](#33-异常处理)
+  - [3.4 流控规则](#34-流控规则)
+  - [3.5 熔断规则](#35-熔断规则)
+  - [3.6 热点规则](#36-热点规则)
+- [4. Gateway](#4-gateway)
+  - [4.1 路由](#41-路由)
+  - [4.2 断言](#42-断言)
+  - [4.3 过滤器](#43-过滤器)
+  - [4.4 全局跨域](#44-全局跨域)
+- [5. Seata](#5-seata)
+  - [5.1 基本术语](#51-基本术语)
+  - [5.2 整合Seata](#52-整合seata)
+  - [5.3 工作原理](#53-工作原理)
 
-> 视频链接: [Spring Cloud 快速通关](https://www.bilibili.com/video/BV1UJc2ezEFU/)
->
-> 采用 JDK21 实现，更推荐使用 JDK17。使用 JDK17 时，需要额外调整 pom 文件配置与相关 API。
 
 # 1. Nacos
 
-## 1.1 简介与下载
+[Nacos]((https://nacos.io/)) 是 Dynamic Naming and Configuration Service 的首字母简称，一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。
 
-Nacos 是 Dynamic Naming and Configuration Service 的首字母简称，一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。
-
-官网：[Nacos官网](https://nacos.io/)
-
-安装：
+## 1.1 安装
 
 - 下载最新的 Nacos 安装包，本文使用 Nacos-2.5.1
 - 启动命令：`startup.cmd -m standalone`
@@ -30,13 +53,13 @@ Nacos 是 Dynamic Naming and Configuration Service 的首字母简称，一个�
 
 3. 配置 Naocs 地址
 
-   ```yaml
-   spring:
-     cloud:
-       nacos:
-         # 配置 Nacos 地址
-         server-addr: 127.0.0.1:8848
-   ```
+  ```yaml
+  spring:
+    cloud:
+     nacos:
+      # 配置 Nacos 地址
+      server-addr: 127.0.0.1:8848
+  ```
 
 4. 启动微服务
 
@@ -53,7 +76,7 @@ Nacos 是 Dynamic Naming and Configuration Service 的首字母简称，一个�
 
 远程调用基本流程：
 
-![远程调用基本流程](/ATT/img/远程调用基本流程.svg)
+![远程调用基本流程](./ATT/img/远程调用基本流程.svg)
 
 ## 1.5 负载均衡
 
@@ -67,11 +90,11 @@ Nacos 是 Dynamic Naming and Configuration Service 的首字母简称，一个�
 
 ```java
 private Product getProductFromRemoteWithLoadBalancerAnnotation(Long productId) {
-    // 给远程发送请求：service-product 会被动态替换
-    String url = "http://service-product/product/" + productId;
-    log.info("远程请求: {}", url);
-    // 给远程发送请求
-    return restTemplate.getForObject(url, Product.class);
+   // 给远程发送请求：service-product 会被动态替换
+   String url = "http://service-product/product/" + productId;
+   log.info("远程请求: {}", url);
+   // 给远程发送请求
+   return restTemplate.getForObject(url, Product.class);
 }
 ```
 
@@ -79,7 +102,7 @@ private Product getProductFromRemoteWithLoadBalancerAnnotation(Long productId) {
 
 > 经典面试题：如果注册中心宕机，远程调用是否可以成功？
 
-![远程调用步骤](/ATT/img/远程调用步骤.svg)
+![远程调用步骤](./ATT/img/远程调用步骤.svg)
 
 - 如果从未调用过，此时注册中心宕机，调用会立即失败
 - 如果调用过：
@@ -96,7 +119,7 @@ private Product getProductFromRemoteWithLoadBalancerAnnotation(Long productId) {
 
 如果存在多个相同的配置信息，那么：
 
-![配置信息优先级](/ATT/img/配置信息优先级.svg)
+![配置信息优先级](./ATT/img/配置信息优先级.svg)
 
 ## 1.7 数据隔离
 
@@ -111,7 +134,7 @@ private Product getProductFromRemoteWithLoadBalancerAnnotation(Long productId) {
 - 区分多种配置
 - 按需加载配置
 
-![Nacos数据隔离解决方案](/ATT/img/Nacos数据隔离解决方案.svg)
+![Nacos数据隔离解决方案](./ATT/img/Nacos数据隔离解决方案.svg)
 
 Nacos 的解决方案：
 
@@ -122,9 +145,10 @@ Nacos 的解决方案：
 
 # 2. OpenFeign
 
-## 2.1 简介与使用
-
 OpenFeign，是一种 Declarative REST Client，即声明式 Rest 客户端，与之对应的是编程式 Rest 客户端，比如 RestTemplate。
+
+
+## 2.1 基本使用
 
 OpenFeign 由注解驱动：
 
@@ -135,15 +159,15 @@ OpenFeign 由注解驱动：
 
 其中的 `@GetMapping` 等注解可以沿用 Spring MVC：
 
-- 当它们标记在 Controller 上时，用于接收请求
-- 当他们标记在 FeignClien 上时，用于发送请求
+- 标记在 Controller 上时，用于接收请求
+- 标记在 FeignClien 上时，用于发送请求
 
 使用时引入以下依赖：
 
 ```xml
 <dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-openfeign</artifactId>
+   <groupId>org.springframework.cloud</groupId>
+   <artifactId>spring-cloud-starter-openfeign</artifactId>
 </dependency>
 ```
 
@@ -153,7 +177,7 @@ OpenFeign 由注解驱动：
 @EnableFeignClients
 ```
 
-![OpenFeign的远程调用](/ATT/img/OpenFeign的远程调用.svg)
+![OpenFeign的远程调用](./ATT/img/OpenFeign的远程调用.svg)
 
 - 远程调用注册中心中的服务参考：`ProductFeignClient`
 - 远程调用指定 URL 参考：`MockUrlFeignClient`
@@ -169,19 +193,19 @@ OpenFeign 由注解驱动：
 
 客户端负载均衡与服务端负载均衡的区别：
 
-![客户端负载均衡与服务端负载均衡](/ATT/img/客户端负载均衡与服务端负载均衡.svg)
+![客户端负载均衡与服务端负载均衡](./ATT/img/客户端负载均衡与服务端负载均衡.svg)
 
 ## 2.4 进阶用法
 
-> 日志
+### 配置日志
 
 在配置文件中指定 feign 接口所在包的日志级别：
 
 ```yaml
 logging:
   level:
-    # 指定 feign 接口所在的包的日志级别为 debug 级别
-    indi.mofan.order.feign: debug
+   # 指定 feign 接口所在的包的日志级别为 debug 级别
+   indi.mofan.order.feign: debug
 ```
 
 向 Spring 容器中注册 `feign.Logger.Level` 对象：
@@ -189,12 +213,12 @@ logging:
 ```java
 @Bean
 public Logger.Level feignlogLevel() {
-    // 指定 OpenFeign 发请求时，日志级别为 FULL
-    return Logger.Level.FULL;
+   // 指定 OpenFeign 发请求时，日志级别为 FULL
+   return Logger.Level.FULL;
 }
 ```
 
-> 超时控制
+### 配置超时控制
 
 连接超时（connectTimeout），默认 10 秒。
 
@@ -205,24 +229,24 @@ public Logger.Level feignlogLevel() {
 ```yaml
 spring:
   cloud:
-    openfeign:
-      client:
-        config:
-          # 默认配置
-          default:
-            logger-level: full
-            connect-timeout: 1000
-            read-timeout: 2000
-          # 具体 feign 客户端的超时配置
-          service-product:
-            logger-level: full
-            # 连接超时，3000 毫秒
-            connect-timeout: 3000
-            # 读取超时，5000 毫秒
-            read-timeout: 5000
+   openfeign:
+    client:
+      config:
+       # 默认配置
+       default:
+        logger-level: full
+        connect-timeout: 1000
+        read-timeout: 2000
+       # 具体 feign 客户端的超时配置
+       service-product:
+        logger-level: full
+        # 连接超时，3000 毫秒
+        connect-timeout: 3000
+        # 读取超时，5000 毫秒
+        read-timeout: 5000
 ```
 
-> 重试机制
+### 配置重试机制
 
 远程调用超时失败后，还可以进行多次尝试，如果某次成功则返回 ok，如果多次尝试后依然失败则结束调用，返回错误。
 
@@ -233,7 +257,7 @@ OpenFeign 底层默认使用 `NEVER_RETRY`，即从不重试策略。
 ```java
 @Bean
 public Retryer retryer() {
-    return new Retryer.Default();
+   return new Retryer.Default();
 }
 ```
 
@@ -241,7 +265,7 @@ public Retryer retryer() {
 
 ```java
 public Default() {
-    this(100L, TimeUnit.SECONDS.toMillis(1L), 5);
+   this(100L, TimeUnit.SECONDS.toMillis(1L), 5);
 }
 ```
 
@@ -251,9 +275,9 @@ OpenFeign 的重试规则是：
 - 最大重试间隔 1s。新一次重试间隔是上一次重试间隔的 1.5 倍，但不能超过最大重试间隔。
 - 最多重试 5 次
 
-> 拦截器
+### 配置拦截器
 
-![OpenFeign的拦截器](/ATT/img/OpenFeign的拦截器.svg)
+![OpenFeign的拦截器](./ATT/img/OpenFeign的拦截器.svg)
 
 以请求拦截器为例，自定义的请求拦截器需要实现 `RequestInterceptor` 接口，并重写 `apply()` 方法：
 
@@ -261,16 +285,16 @@ OpenFeign 的重试规则是：
 package indi.mofan.order.interceptor;
 
 public class XTokenRequestInterceptor implements RequestInterceptor {
-    /**
-     * 请求拦截器
-     *
-     * @param template 封装本次请求的详细信息
-     */
-    @Override
-    public void apply(RequestTemplate template) {
-        System.out.println("XTokenRequestInterceptor ...");
-        template.header("X-Token", UUID.randomUUID().toString());
-    }
+   /**
+    * 请求拦截器
+    *
+    * @param template 封装本次请求的详细信息
+    */
+   @Override
+   public void apply(RequestTemplate template) {
+      System.out.println("XTokenRequestInterceptor ...");
+      template.header("X-Token", UUID.randomUUID().toString());
+   }
 }
 ```
 
@@ -278,31 +302,31 @@ public class XTokenRequestInterceptor implements RequestInterceptor {
 
 1. 在配置文件中配置对应 Feign 客户端的请求拦截器，此时该拦截器只对指定的 Feign 客户端生效
 
-   ```yaml
-   spring:
-     cloud:
-       openfeign:
-         client:
-           config:
-             # 具体 feign 客户端
-             service-product:
-               # 该请求拦截器仅对当前客户端有效
-               request-interceptors:
-                 - indi.mofan.order.interceptor.XTokenRequestInterceptor
-   ```
+  ```yaml
+  spring:
+    cloud:
+     openfeign:
+      client:
+        config:
+         # 具体 feign 客户端
+         service-product:
+          # 该请求拦截器仅对当前客户端有效
+          request-interceptors:
+            - indi.mofan.order.interceptor.XTokenRequestInterceptor
+  ```
 
 2. 还可以直接将自定义的请求拦截器添加到 Spring 容器中，此时该拦截器对服务内的所有 Feign 客户端生效
 
-   ```java
-   @Component
-   public class XTokenRequestInterceptor implements RequestInterceptor {
-       // --snip--
-   }
-   ```
+  ```java
+  @Component
+  public class XTokenRequestInterceptor implements RequestInterceptor {
+     // --snip--
+  }
+  ```
 
-> Fallback
+### 配置Fallback
 
-![OpenFeign的Fallback](/ATT/img/OpenFeign的Fallback.svg)
+![OpenFeign的Fallback](./ATT/img/OpenFeign的Fallback.svg)
 
 Fallback，即兜底返回。
 
@@ -312,8 +336,8 @@ Fallback，即兜底返回。
 
 ```xml
 <dependency>
-    <groupId>com.alibaba.cloud</groupId>
-    <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+   <groupId>com.alibaba.cloud</groupId>
+   <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
 </dependency>
 ```
 
@@ -322,7 +346,7 @@ Fallback，即兜底返回。
 ```yaml
 feign:
   sentinel:
-    enabled: true
+   enabled: true
 ```
 
 现在需要对 Feign 客户端 `ProductFeignClient` 配置 Fallback，那么需要先实现 `ProductFeignClient` 编写兜底返回逻辑，并将其交由 Spring 管理：
@@ -330,16 +354,16 @@ feign:
 ```java
 @Component
 public class ProductFeignClientFallback implements ProductFeignClient {
-    @Override
-    public Product getProductById(Long id) {
-        System.out.println("Fallback...");
-        Product product = new Product();
-        product.setId(id);
-        product.setPrice(new BigDecimal("0"));
-        product.setProductName("未知商品");
-        product.setNum(0);
-        return product;
-    }
+   @Override
+   public Product getProductById(Long id) {
+      System.out.println("Fallback...");
+      Product product = new Product();
+      product.setId(id);
+      product.setPrice(new BigDecimal("0"));
+      product.setProductName("未知商品");
+      product.setNum(0);
+      return product;
+   }
 }
 ```
 
@@ -349,8 +373,8 @@ public class ProductFeignClientFallback implements ProductFeignClient {
 @FeignClient(value = "service-product", fallback = ProductFeignClientFallback.class)
 public interface ProductFeignClient {
 
-    @GetMapping("/product/{id}")
-    Product getProductById(@PathVariable("id") Long id);
+   @GetMapping("/product/{id}")
+   Product getProductById(@PathVariable("id") Long id);
 }
 ```
 
@@ -362,7 +386,7 @@ public interface ProductFeignClient {
 
 随着微服务的流行，服务和服务之间的稳定性变得越来越重要。Spring Cloud Alibaba Sentinel 以流量为切入点，从流量控制、流量路由、熔断降级、系统自适应过载保护、热点流量防护等多个维度保护服务的稳定性。
 
-![Sentinel架构原理](/ATT/img/Sentinel架构原理.svg)
+![Sentinel架构原理](./ATT/img/Sentinel架构原理.svg)
 
 定义规则：
 
@@ -384,7 +408,7 @@ public interface ProductFeignClient {
 
 - 热点参数（ParamFlowRule）
 
-![Sentinel工作原理](/ATT/img/Sentinel工作原理.svg)
+![Sentinel工作原理](./ATT/img/Sentinel工作原理.svg)
 
 ## 3.2 整合 Sentinel
 
@@ -406,8 +430,8 @@ java -jar sentinel-dashboard-1.8.8.jar
 
 ```xml
 <dependency>
-    <groupId>com.alibaba.cloud</groupId>
-    <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+   <groupId>com.alibaba.cloud</groupId>
+   <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
 </dependency>
 ```
 
@@ -416,14 +440,14 @@ java -jar sentinel-dashboard-1.8.8.jar
 ```yaml
 spring:
   application:
-    name: service-product
+   name: service-product
   cloud:
-    sentinel:
-      transport:
-        # 控制台地址
-        dashboard: localhost:8080
-      # 立即加载服务  
-      eager: true
+   sentinel:
+    transport:
+      # 控制台地址
+      dashboard: localhost:8080
+    # 立即加载服务  
+    eager: true
 ```
 
 配置完成后启动对应服务，再前往 Sentinel Dashboard 查看，能够看到对应服务信息。
@@ -432,7 +456,7 @@ spring:
 
 ## 3.3 异常处理
 
-![Sentinel异常处理](/ATT/img/Sentinel异常处理.svg)
+![Sentinel异常处理](./ATT/img/Sentinel异常处理.svg)
 
 > Web 接口
 
@@ -448,28 +472,28 @@ Blocked by Sentinel (flow limiting)
 @Component
 public class MyBlockExceptionHandler implements BlockExceptionHandler {
 
-    private final ObjectMapper objectMapper;
+   private final ObjectMapper objectMapper;
 
-    public MyBlockExceptionHandler(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+   public MyBlockExceptionHandler(ObjectMapper objectMapper) {
+      this.objectMapper = objectMapper;
+   }
 
-    @Override
-    public void handle(HttpServletRequest request,
-                       HttpServletResponse response,
-                       String resourceName,
-                       BlockException e) throws Exception {
-        response.setContentType("application/json;charset=utf-8");
-        PrintWriter writer = response.getWriter();
+   @Override
+   public void handle(HttpServletRequest request,
+                HttpServletResponse response,
+                String resourceName,
+                BlockException e) throws Exception {
+      response.setContentType("application/json;charset=utf-8");
+      PrintWriter writer = response.getWriter();
 
-        R error = R.error(500, resourceName + " 被 Sentinel 限制了, 原因: " + e.getClass());
+      R error = R.error(500, resourceName + " 被 Sentinel 限制了, 原因: " + e.getClass());
 
-        String json = objectMapper.writeValueAsString(error);
-        writer.write(json);
+      String json = objectMapper.writeValueAsString(error);
+      writer.write(json);
 
-        writer.flush();
-        writer.close();
-    }
+      writer.flush();
+      writer.close();
+   }
 }
 ```
 
@@ -477,9 +501,9 @@ public class MyBlockExceptionHandler implements BlockExceptionHandler {
 
 ```json
 {
-    "code": 500,
-    "message": "/create 被 Sentinel 限制了, 原因: class com.alibaba.csp.sentinel.slots.block.flow.FlowException",
-    "data": null
+   "code": 500,
+   "message": "/create 被 Sentinel 限制了, 原因: class com.alibaba.csp.sentinel.slots.block.flow.FlowException",
+   "data": null
 }
 ```
 
@@ -498,7 +522,7 @@ public class MyBlockExceptionHandler implements BlockExceptionHandler {
 ```java
 @SentinelResource(value = "createOrder", blockHandler = "createOrderFallback")
 public Order createOrder(Long productId, Long userId) {
-    // --snip--
+   // --snip--
 }
 ```
 
@@ -509,13 +533,13 @@ public Order createOrder(Long productId, Long userId) {
  * 指定兜底回调
  */
 public Order createOrderFallback(Long productId, Long userId, BlockException e) {
-    Order order = new Order();
-    order.setId(0L);
-    order.setTotalAmount(new BigDecimal("0"));
-    order.setUserId(userId);
-    order.setNickname("未知用户");
-    order.setAddress("异常信息: " + e.getClass());
-    return order;
+   Order order = new Order();
+   order.setId(0L);
+   order.setTotalAmount(new BigDecimal("0"));
+   order.setUserId(userId);
+   order.setNickname("未知用户");
+   order.setAddress("异常信息: " + e.getClass());
+   return order;
 }
 ```
 
@@ -523,12 +547,12 @@ public Order createOrderFallback(Long productId, Long userId, BlockException e) 
 
 ```json
 {
-    "id": 0,
-    "totalAmount": 0,
-    "userId": 666,
-    "nickname": "未知用户",
-    "address": "异常信息: class com.alibaba.csp.sentinel.slots.block.flow.FlowException",
-    "productList": null
+   "id": 0,
+   "totalAmount": 0,
+   "userId": 666,
+   "nickname": "未知用户",
+   "address": "异常信息: class com.alibaba.csp.sentinel.slots.block.flow.FlowException",
+   "productList": null
 }
 ```
 
@@ -540,11 +564,11 @@ public Order createOrderFallback(Long productId, Long userId, BlockException e) 
 
 流控，即流量控制（FlowRule），用于限制多余请求，从而保护系统资源不被耗尽。
 
-![Sentinel流控](/ATT/img/Sentinel流控.svg)
+![Sentinel流控](./ATT/img/Sentinel流控.svg)
 
 > 阈值类型
 
-![Sentinel设置流控阈值类型](/ATT/img/Sentinel设置流控阈值类型.png)
+![Sentinel设置流控阈值类型](./ATT/img/Sentinel设置流控阈值类型.png)
 
 Sentinel 的流控阈值规则有两种：
 
@@ -558,7 +582,7 @@ Sentinel 的流控阈值规则有两种：
 
 > 流控模式
 
-![Sentinel的流控模式](/ATT/img/Sentinel的流控模式.png)
+![Sentinel的流控模式](./ATT/img/Sentinel的流控模式.png)
 
 配置流控规则时，可以点击下方的「高级选项」，在这里可以配置「流控模式」，共有三种可选项：
 
@@ -568,7 +592,7 @@ Sentinel 的流控阈值规则有两种：
 
 调用关系包括调用方、被调用方；一个方法又可能会调用其他方法，形成一个调用链路的层次关系；有了调用链路的统计信息，可以衍生出多种流量控制手段。
 
-![Sentinel流控模式](/ATT/img/Sentinel流控模式.svg)
+![Sentinel流控模式](./ATT/img/Sentinel流控模式.svg)
 
 | **维度** |        直接        |              关联              |            链路            |
 | :------: | :----------------: | :----------------------------: | :------------------------: |
@@ -586,7 +610,7 @@ Sentinel 的流控阈值规则有两种：
 2. Warm Up：初始阈值较低（默认是设定阈值的 $\frac{1}{3}$），随后在预热时间内逐步提升至设定阈值。例如设定阈值为 3 QPS、预热时间 3 秒，初始阈值为 1 QPS，3 秒内逐步升至 3。
 3. 排队等待：基于漏桶算法，请求进入队列后按固定间隔时间匀速处理。若请求的预期等待时间超过设定的超时时间，则拒绝请求。
 
-![Sentinel流控效果](/ATT/img/Sentinel流控效果.svg)
+![Sentinel流控效果](./ATT/img/Sentinel流控效果.svg)
 
 |   效果   |        核心机制        |          适用场景          | 阈值动态变化 |    流量特征    |
 | :------: | :--------------------: | :------------------------: | :----------: | :------------: |
@@ -608,7 +632,7 @@ Sentinel 的流控阈值规则有两种：
 
 熔断降级里的核心组件是「断路器」，其工作原理如下：
 
-![断路器工作原理](/ATT/img/断路器工作原理.svg)
+![断路器工作原理](./ATT/img/断路器工作原理.svg)
 
 Sentinel 提供了三种熔断策略：
 
@@ -618,7 +642,7 @@ Sentinel 提供了三种熔断策略：
 
 > 慢调用比例
 
-![配置慢调用比例的熔断规则](/ATT/img/配置慢调用比例的熔断规则.png)
+![配置慢调用比例的熔断规则](./ATT/img/配置慢调用比例的熔断规则.png)
 
 在 5000ms 内，有 80%（0.8 的比例阈值）的请求的最大响应时间超过 1000ms，则进行 30s 的熔断。
 
@@ -632,7 +656,7 @@ Sentinel 提供了三种熔断策略：
 
 换句话说，没有配置任何熔断规则可以触发兜底回调，而配置熔断规则也是为了触发兜底回调，那岂不是配不配置熔断规则都可以？
 
-![有无熔断规则的比较](/ATT/img/有无熔断规则的比较.svg)
+![有无熔断规则的比较](./ATT/img/有无熔断规则的比较.svg)
 
 当 A 服务向 B 服务发送请求时，远程调用的 B 服务接口中存在异常，此时触发兜底回调。
 
@@ -640,13 +664,13 @@ Sentinel 提供了三种熔断策略：
 
 而配置熔断规则后，A 服务发送的请求快速失败，立即出发兜底回调，不会再把请求打到 B 服务上。
 
-![配置异常比例的熔断规则](/ATT/img/配置异常比例的熔断规则.png)
+![配置异常比例的熔断规则](./ATT/img/配置异常比例的熔断规则.png)
 
 在 5000ms 内，有 80%（0.8 的比例阈值）的请求产生了异常，则进行 30s 的熔断。
 
 > 异常数
 
-![配置异常数的熔断规则](/ATT/img/配置异常数的熔断规则.png)
+![配置异常数的熔断规则](./ATT/img/配置异常数的熔断规则.png)
 
 「异常数」的熔断策略与「异常比例」很类似，只不过「异常数」是直接统计异常个数，就算统计时长内产生了一百万个请求，但只要有 10 个请求出现了异常，也会触发熔断。
 
@@ -661,7 +685,7 @@ Sentinel 提供了三种熔断策略：
 
 **热点参数限流可以看做是一种特殊的流量控制，仅对包含热点参数的资源调用生效。** 
 
-![Sentinel热点规则概述](/ATT/img/Sentinel热点规则概述.png)
+![Sentinel热点规则概述](./ATT/img/Sentinel热点规则概述.png)
 
 Sentinel 利用 LRU 策略统计最近最常访问的热点参数，结合令牌桶算法来进行参数级别的流控。
 
@@ -681,29 +705,29 @@ Sentinel 利用 LRU 策略统计最近最常访问的热点参数，结合令牌
 @GetMapping("/seckill")
 @SentinelResource(value = "seckill-order", fallback = "seckillFallback")
 public Order seckill(@RequestParam(value = "userId", required = false) Long userId,
-                     @RequestParam(value = "productId", defaultValue = "1000") Long productId) {
-    Order order = orderService.createOrder(productId, userId);
-    order.setId(Long.MAX_VALUE);
-    return order;
+              @RequestParam(value = "productId", defaultValue = "1000") Long productId) {
+   Order order = orderService.createOrder(productId, userId);
+   order.setId(Long.MAX_VALUE);
+   return order;
 }
 
 public Order seckillFallback(Long userId,
-                             Long productId,
-                             // 使用 fallback，而不是 blockHandler
-                             // 最后一个参数类型是 Throwable，而不是 BlockException
-                             Throwable throwable) {
-    System.out.println("seckillFallback...");
-    Order order = new Order();
-    order.setId(productId);
-    order.setUserId(userId);
-    order.setAddress("异常信息: " + throwable.getClass());
-    return order;
+                    Long productId,
+                    // 使用 fallback，而不是 blockHandler
+                    // 最后一个参数类型是 Throwable，而不是 BlockException
+                    Throwable throwable) {
+   System.out.println("seckillFallback...");
+   Order order = new Order();
+   order.setId(productId);
+   order.setUserId(userId);
+   order.setAddress("异常信息: " + throwable.getClass());
+   return order;
 }
 ```
 
 对 `seckill-order` 资源进行如下热点规则配置：
 
-![根据需求1配置热点规则](/ATT/img/根据需求1配置热点规则.png)
+![根据需求1配置热点规则](./ATT/img/根据需求1配置热点规则.png)
 
 这表示：访问 `seckill-order` 资源时，第一个参数（参数索引 0）在 1 秒的统计窗口时长下，其阈值为 1，也就是 QPS = 1。
 
@@ -713,8 +737,8 @@ public Order seckillFallback(Long userId,
 @GetMapping("/seckill")
 @SentinelResource(value = "seckill-order", fallback = "seckillFallback")
 public Order seckill(@RequestParam(value = "userId", defaultValue = "888") Long userId,
-                     @RequestParam(value = "productId", defaultValue = "1000") Long productId) {
-    // --snip--
+              @RequestParam(value = "productId", defaultValue = "1000") Long productId) {
+   // --snip--
 }
 ```
 
@@ -724,8 +748,8 @@ public Order seckill(@RequestParam(value = "userId", defaultValue = "888") Long 
 @GetMapping("/seckill")
 @SentinelResource(value = "seckill-order", fallback = "seckillFallback")
 public Order seckill(@RequestParam(value = "userId", required = false) Long userId,
-                     @RequestParam(value = "productId", defaultValue = "1000") Long productId) {
-    // --snip--
+              @RequestParam(value = "productId", defaultValue = "1000") Long productId) {
+   // --snip--
 }
 ```
 
@@ -733,7 +757,7 @@ public Order seckill(@RequestParam(value = "userId", required = false) Long user
 
 经过上述配置，已经完成「每个用户秒杀 QPS 不得超过 1」的需求，但「6 号用户」是个例外：
 
-![根据需求2编辑热点规则](/ATT/img/根据需求2编辑热点规则.png)
+![根据需求2编辑热点规则](./ATT/img/根据需求2编辑热点规则.png)
 
 访问 `seckill-order` 资源时，第一个参数（参数索引 0）的类型是 `long`，当其值为 `6` 时，限流阈值为 `1000000`，变相不限制「6 号用户」的 QPS。
 
@@ -741,13 +765,13 @@ public Order seckill(@RequestParam(value = "userId", required = false) Long user
 
 新增热点规则：
 
-![根据需求3配置热点规则](/ATT/img/根据需求3配置热点规则.png)
+![根据需求3配置热点规则](./ATT/img/根据需求3配置热点规则.png)
 
 访问 `seckill-order` 资源时，第二个参数（参数索引 1）在 1 秒的统计窗口时长下，其阈值为 1000000，这是一个无法达到的值，相当于不进行限流。但有一个例外：当其值为 666 时，限流阈值为 0，也就是不允许访问。
 
 # 4. Gateway
 
-![Gateway的概述](/ATT/img/Gateway的概述.svg)
+![Gateway的概述](./ATT/img/Gateway的概述.svg)
 
 ## 4.1 路由
 
@@ -762,31 +786,31 @@ public Order seckill(@RequestParam(value = "userId", required = false) Long user
 ```yaml
 spring:
   cloud:
-    gateway:
-      routes:
-        - id: bing-route
-          uri: https://cn.bing.com
-          predicates:
-            - Path=/**
-          order: 10
-          # id 全局唯一
-        - id: order-route
-          # 指定服务名称
-          uri: lb://service-order
-          # 指定断言规则，即路由匹配规则
-          predicates:
-            - Path=/api/order/**
-          order: 1
-        - id: product-route
-          uri: lb://service-product
-          predicates:
-            - Path=/api/product/**
-          order: 2
+   gateway:
+    routes:
+      - id: bing-route
+       uri: https://cn.bing.com
+       predicates:
+        - Path=/**
+       order: 10
+       # id 全局唯一
+      - id: order-route
+       # 指定服务名称
+       uri: lb://service-order
+       # 指定断言规则，即路由匹配规则
+       predicates:
+        - Path=/api/order/**
+       order: 1
+      - id: product-route
+       uri: lb://service-product
+       predicates:
+        - Path=/api/product/**
+       order: 2
 ```
 
 Gateway 路由的工作原理如下：
 
-![Gateway路由的工作原理](/ATT/img/Gateway路由的工作原理.svg)
+![Gateway路由的工作原理](./ATT/img/Gateway路由的工作原理.svg)
 
 ## 4.2 断言
 
@@ -797,24 +821,24 @@ Gateway 路由的工作原理如下：
 ```yaml
 spring:
   cloud:
-    gateway:
-      routes:
-          # id 全局唯一
-        - id: order-route
-          # 指定服务名称
-          uri: lb://service-order
-          # 指定断言规则，即路由匹配规则
-          # Fully Expanded Arguments
-          predicates:
-            - name: Path
-              args:
-                patterns: /api/order/**
-                matchTrailingSlash: true
-        - id: product-route
-          uri: lb://service-product
-          # Shortcut Configuration
-          predicates:
-            - Path=/api/product/**
+   gateway:
+    routes:
+       # id 全局唯一
+      - id: order-route
+       # 指定服务名称
+       uri: lb://service-order
+       # 指定断言规则，即路由匹配规则
+       # Fully Expanded Arguments
+       predicates:
+        - name: Path
+          args:
+           patterns: /api/order/**
+           matchTrailingSlash: true
+      - id: product-route
+       uri: lb://service-product
+       # Shortcut Configuration
+       predicates:
+        - Path=/api/product/**
 ```
 
 在 Spring Cloud Gateway 的实现中，断言的实现都是 `RoutePredicateFactory` 接口的实现。
@@ -849,18 +873,18 @@ spring:
 ```yaml
 spring:
   cloud:
-    gateway:
-      routes:
-        - id: bing-route
-          uri: https://cn.bing.com
-          predicates:
-            - name: Path
-              args:
-                patterns: /search
-            - name: Query
-              args:
-                param: q
-                regexp: haha
+   gateway:
+    routes:
+      - id: bing-route
+       uri: https://cn.bing.com
+       predicates:
+        - name: Path
+          args:
+           patterns: /search
+        - name: Query
+          args:
+           param: q
+           regexp: haha
 ```
 
 这表示：访问网关的 `/search` 地址，并且使用了名为 `q` 的请求参数，且值为 `haha`，才会将请求转到 `https://cn.bing.com`。
@@ -872,19 +896,19 @@ spring:
 ```yaml
 spring:
   cloud:
-    gateway:
-      routes:
-        - id: bing-route
-          uri: https://cn.bing.com
-          predicates:
-            - name: Path
-              args:
-                patterns: /search
-            - name: Query
-              args:
-                param: q
-                regexp: haha
-            - Vip=user,mofan
+   gateway:
+    routes:
+      - id: bing-route
+       uri: https://cn.bing.com
+       predicates:
+        - name: Path
+          args:
+           patterns: /search
+        - name: Query
+          args:
+           param: q
+           regexp: haha
+        - Vip=user,mofan
 ```
 
 自定义 `AbstractRoutePredicateFactory` 实现类 `VipRoutePredicateFactory`：
@@ -898,34 +922,34 @@ spring:
 public class VipRoutePredicateFactory extends AbstractRoutePredicateFactory<VipRoutePredicateFactory.Config> {
 
 
-    public VipRoutePredicateFactory() {
-        super(Config.class);
-    }
+   public VipRoutePredicateFactory() {
+      super(Config.class);
+   }
 
-    @Override
-    public List<String> shortcutFieldOrder() {
-        return List.of("param", "value");
-    }
+   @Override
+   public List<String> shortcutFieldOrder() {
+      return List.of("param", "value");
+   }
 
-    @Override
-    public Predicate<ServerWebExchange> apply(Config config) {
-        return (GatewayPredicate) serverWebExchange -> {
-            // localhost/search?q=haha&user=mofan
-            ServerHttpRequest request = serverWebExchange.getRequest();
-            String first = request.getQueryParams().getFirst(config.param);
-            return StringUtils.hasText(first) && first.equals(config.value);
-        };
-    }
+   @Override
+   public Predicate<ServerWebExchange> apply(Config config) {
+      return (GatewayPredicate) serverWebExchange -> {
+        // localhost/search?q=haha&user=mofan
+        ServerHttpRequest request = serverWebExchange.getRequest();
+        String first = request.getQueryParams().getFirst(config.param);
+        return StringUtils.hasText(first) && first.equals(config.value);
+      };
+   }
 
-    @Validated
-    @Getter
-    @Setter
-    public static class Config {
-        @NotEmpty
-        private String param;
-        @NotEmpty
-        private String value;
-    }
+   @Validated
+   @Getter
+   @Setter
+   public static class Config {
+      @NotEmpty
+      private String param;
+      @NotEmpty
+      private String value;
+   }
 }
 ```
 
@@ -935,7 +959,7 @@ public class VipRoutePredicateFactory extends AbstractRoutePredicateFactory<VipR
 
 官方文档：[GatewayFilter Factories](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/gatewayfilter-factories.html)
 
-![Gateway过滤器](/ATT/img/Gateway过滤器.svg)
+![Gateway过滤器](./ATT/img/Gateway过滤器.svg)
 
 先前在网关中配置了将 `/api/order/` 开头的请求转到 `service-order` 服务，并要求在 `service-order` 服务中也存在 `/api/order/` 开头的请求路径，比如 `/api/order/readDb`。如果该服务中原先并不存在 `/api/order/` 开头的请求，比如只有 `/readDb`，那么在以 `/api/order/readDb` 进行访问就会出现 404 错误。
 
@@ -943,36 +967,36 @@ public class VipRoutePredicateFactory extends AbstractRoutePredicateFactory<VipR
 
 Gateway 中内置了许多过滤器，其中有一个常用的过滤器名为：`RewritePath`，即路径重写。
 
-![RewritePath过滤器](/ATT/img/RewritePath过滤器.svg)
+![RewritePath过滤器](./ATT/img/RewritePath过滤器.svg)
 
 ```yaml
 spring:
   cloud:
-    gateway:
-      routes:
-          # id 全局唯一
-        - id: order-route
-          # 指定服务名称
-          uri: lb://service-order
-          # 指定断言规则，即路由匹配规则
-          # Fully Expanded Arguments
-          predicates:
-            - name: Path
-              args:
-                patterns: /api/order/**
-                matchTrailingSlash: true
-          filters:
-            # 类似把 /api/order/a/bc 重写为 /a/bc，移除路径前的 /api/order/
-            - RewritePath=/api/order/?(?<segment>.*), /$\{segment}
-          order: 1
-        - id: product-route
-          uri: lb://service-product
-          # Shortcut Configuration
-          predicates:
-            - Path=/api/product/**
-          filters:
-            - RewritePath=/api/product/?(?<segment>.*), /$\{segment}
-          order: 2
+   gateway:
+    routes:
+       # id 全局唯一
+      - id: order-route
+       # 指定服务名称
+       uri: lb://service-order
+       # 指定断言规则，即路由匹配规则
+       # Fully Expanded Arguments
+       predicates:
+        - name: Path
+          args:
+           patterns: /api/order/**
+           matchTrailingSlash: true
+       filters:
+        # 类似把 /api/order/a/bc 重写为 /a/bc，移除路径前的 /api/order/
+        - RewritePath=/api/order/?(?<segment>.*), /$\{segment}
+       order: 1
+      - id: product-route
+       uri: lb://service-product
+       # Shortcut Configuration
+       predicates:
+        - Path=/api/product/**
+       filters:
+        - RewritePath=/api/product/?(?<segment>.*), /$\{segment}
+       order: 2
 ```
 
 > 默认过滤器
@@ -982,10 +1006,10 @@ spring:
 ```yaml
 spring:
   cloud:
-    gateway:
-      default-filters:
-        # 为所有路由添加响应头过滤器
-        - AddResponseHeader=X-Response-Abc, 123
+   gateway:
+    default-filters:
+      # 为所有路由添加响应头过滤器
+      - AddResponseHeader=X-Response-Abc, 123
 ```
 
 > 全局过滤器
@@ -1004,23 +1028,23 @@ spring:
 @Slf4j
 @Component
 public class RtGlobalFilter implements GlobalFilter, Ordered {
-    @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-        String uri = request.getURI().toString();
-        long start = System.currentTimeMillis();
-        log.info("请求 [{}] 开始，时间：{}", uri, start);
-        return chain.filter(exchange)
-                .doFinally(res -> {
-                    long end = System.currentTimeMillis();
-                    log.info("请求 [{}] 结束，时间：{}，耗时：{}ms", uri, start, end - start);
-                });
-    }
+   @Override
+   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+      ServerHttpRequest request = exchange.getRequest();
+      String uri = request.getURI().toString();
+      long start = System.currentTimeMillis();
+      log.info("请求 [{}] 开始，时间：{}", uri, start);
+      return chain.filter(exchange)
+           .doFinally(res -> {
+              long end = System.currentTimeMillis();
+              log.info("请求 [{}] 结束，时间：{}，耗时：{}ms", uri, start, end - start);
+           });
+   }
 
-    @Override
-    public int getOrder() {
-        return 0;
-    }
+   @Override
+   public int getOrder() {
+      return 0;
+   }
 }
 ```
 
@@ -1039,34 +1063,34 @@ public class RtGlobalFilter implements GlobalFilter, Ordered {
  */
 @Component
 public class OnceTokenGatewayFilterFactory extends AbstractNameValueGatewayFilterFactory {
-    @Override
-    public GatewayFilter apply(NameValueConfig config) {
-        return (exchange, chain) -> chain.filter(exchange).then(Mono.fromRunnable(() -> {
-            ServerHttpResponse response = exchange.getResponse();
+   @Override
+   public GatewayFilter apply(NameValueConfig config) {
+      return (exchange, chain) -> chain.filter(exchange).then(Mono.fromRunnable(() -> {
+        ServerHttpResponse response = exchange.getResponse();
 
-            String value = switch (config.getValue().toLowerCase()) {
-                case "uuid" -> UUID.randomUUID().toString();
-                case "jwt" -> "Test Token";
-                default -> "";
-            };
+        String value = switch (config.getValue().toLowerCase()) {
+           case "uuid" -> UUID.randomUUID().toString();
+           case "jwt" -> "Test Token";
+           default -> "";
+        };
 
-            HttpHeaders headers = response.getHeaders();
-            headers.add(config.getName(), value);
-        }));
-    }
+        HttpHeaders headers = response.getHeaders();
+        headers.add(config.getName(), value);
+      }));
+   }
 }
 ```
 
 ```yaml
 spring:
   cloud:
-    gateway:
-      routes:
-        - id: order-route
-          uri: lb://service-order
-          filters:
-            # 自定义过滤器
-            - OnceToken=X-Response-Token, uuid
+   gateway:
+    routes:
+      - id: order-route
+       uri: lb://service-order
+       filters:
+        # 自定义过滤器
+        - OnceToken=X-Response-Token, uuid
 ```
 
 ## 4.4 全局跨域
@@ -1082,38 +1106,44 @@ spring:
 ```yaml
 spring:
   cloud:
-    gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowed-origin-patterns: '*'
-            allowed-headers: '*'
-            allowedMethods: '*'
+   gateway:
+    globalcors:
+      cors-configurations:
+       '[/**]':
+        allowed-origin-patterns: '*'
+        allowed-headers: '*'
+        allowedMethods: '*'
 ```
 
  之后在请求的 Response Headers 中会增加一些允许跨域的信息。
 
 # 5. Seata
 
+[Seata](https://seata.apache.org/zh-cn/) 是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。
+
+为什么需要分布式事务? 
+
 在微服务项目中，一个操作往往会涉及多个不同的服务，每个服务又会连接不同的数据库：
 
-![一个操作涉及多个微服务](/ATT/img/一个操作涉及多个微服务.svg)
-
-此时应该如何保证多个事务的统一提交和统一回滚呢？
-
-[Seata](https://seata.apache.org/zh-cn/) 是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。
+![一个操作涉及多个微服务](./ATT/img/一个操作涉及多个微服务.svg)
 
 现有如下交易流程：
 
-![Seata演示示例流程](/ATT/img/Seata演示示例流程.png)
+![Seata演示示例流程](./ATT/img/Seata演示示例流程.png)
 
 发起采购流程后，需要扣库存、生成订单、从账户中扣除指定金额，任一流程发生异常时，整个流程应当回滚。
 
-![Seata演示示例分布式事务解决方案.](/ATT/img/Seata演示示例分布式事务解决方案.png)
+## 5.1 基本术语
+
+
+
+![Seata演示示例分布式事务解决方案.](./ATT/img/Seata演示示例分布式事务解决方案.png)
 
 - TC：Transaction Coordinator，即事务协调者。维护全局和分支事务的状态，驱动全局事务提交或回滚；
 - TM：Transaction Manager，即事务管理器。定义全局事务的范围，开始全局事务、提交或回滚全局事务；
 - RM：Resource Manager，即资源管理器。管理分支事务处理的资源，与 TC 交谈以注册分支事务和报告分支事务的状态，并驱动分支事务提交或回滚。
+
+## 5.2 整合Seata
 
 [下载](https://seata.apache.org/zh-cn/download/seata-server)并解压 Seata 后，进入 `bin` 目录，使用 `seata-server.bat` 命令启动 Seata。
 
@@ -1123,8 +1153,8 @@ spring:
 
 ```xml
 <dependency>
-    <groupId>com.alibaba.cloud</groupId>
-    <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+   <groupId>com.alibaba.cloud</groupId>
+   <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
 </dependency>
 ```
 
@@ -1145,4 +1175,6 @@ service {
 
 最后在最顶端的方法入口上使用 `@GlobalTransactional` 注解，由此开启全局事务。
 
-![Seata二阶提交协议](/ATT/img/Seata二阶提交协议.svg)
+## 5.3 工作原理
+
+![Seata二阶提交协议](./ATT/img/Seata二阶提交协议.svg)
