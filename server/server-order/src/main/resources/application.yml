@@ -1,0 +1,42 @@
+server:
+  port: 8000
+
+logging:
+  level:
+    org.cloud.feign: DEBUG
+
+spring:
+  profiles:
+    active: dev
+    include: feign # 导入application-feign.yml
+  application:
+    name: server-order
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        namespace: ${spring.profiles.active:dev}
+    sentinel:
+      eager: true
+      transport:
+        dashboard: localhost:8080 # 配置sentinel dashboard, 此配置需要额外运行sentinel dashboard程序
+      web-context-unify: false # 如果需要使用链路限流策略, 需要关闭web上下文统一
+
+--- # Yml文件中表示一个新配置的开始
+spring:
+  config:
+    import:
+      - nacos:dev-file?group=order
+      - nacos:server-common.yml?group=order
+    activate:
+      on-profile: dev
+
+---
+spring:
+  config:
+    import:
+      - nacos:test-file?group=order
+      - nacos:server-common.yml?group=order
+    activate:
+      on-profile: test

@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          # 配置默认配置
+          default:
+            logger-level: full
+            connect-timeout: 1000 # ms
+            read-timeout: 2000
+          # 仅对 server-product 的OpenFeignClient生效
+          server-product:
+            logger-level: full
+            connect-timeout: 3000
+            read-timeout: 5000
+#            request-interceptors:
+#              - org.cloud.interceptor.ProductInterceptor
+#            retryer: feign.Retryer$Default # 使用默认的Retryer实现
+
+feign:
+  sentinel: # 需要导入 spring-cloud-starter-alibaba-sentinel
+    enabled: true

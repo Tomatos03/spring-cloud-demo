@@ -1,0 +1,47 @@
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          # [/**]: 匹配规则的书写参考链接文档中的Example:
+          # https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/AntPathMatcher.html
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+#            allowCredentials: false
+      # 配置默认过滤器
+      default-filters:
+        - AddResponseHeader=custom-header, 112233
+      routes:
+#        - id: bing
+#          uri: http://www.bing.com/search?
+#          order: 10 # 数字越大优先级越低
+#          predicates:
+#            - Path=/api/order/*
+#            - Custom= q, Daming # 快捷写法参数之间总是以逗号分割, 且快捷写法生效的前提是谓词工厂了实现shortcutFieldOrder方法
+#            - name: Custom # 使用自定义的谓词工厂
+#              args:
+#                param: q
+#                value: DaMing
+        - id: order
+          uri: lb://server-order
+          order: 1
+          filters:
+            # /api/order/(?<segment>.*) 使用了正则表达式
+            - RewritePath=/api/order/(?<segment>.*), /$\{segment}
+            - OnceToken=Response-Token, uuid
+          predicates:
+            - name: Path
+              args:
+                patterns: /api/order/**
+          # 断言可配置种类参考:
+          # https://springdoc.cn/spring-cloud-gateway/#gateway-request-predicates-factories
+#          简化配置方式
+#          predicates:
+#            - Path=/api/order/**
+        - id: product
+          uri: lb://server-product
+          predicates:
+            - Path=/api/product/**
+# 请求路由匹配优先级默认从上到下, 如果需要打破这个顺序, 可以显式的去书写order属性

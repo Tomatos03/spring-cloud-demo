@@ -1,0 +1,18 @@
+
+spring:
+  application:
+    name: server-product
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+      discovery:
+        server-addr: 192.168.1.165:8848
+    sentinel:
+      eager: true
+      transport:
+        dashboard: localhost:8080 # 配置sentinel dashboard, 此配置需要额外运行sentinel dashboard程序
+
+server:
+  port: 8005
