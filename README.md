@@ -814,7 +814,7 @@ Gateway 路由的工作原理如下：
 
 ## 4.2 断言
 
-官方文档：[Route Predicate Factories](https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/request-predicates-factories.html)
+官方文档：[Route Predicate Factories](https://docs.spring.io/spring-cloud-gateway/reference/4.1/spring-cloud-gateway/configuring-route-predicate-factories-and-filter-factories.html)
 
 断言的两种书写方式：
 
